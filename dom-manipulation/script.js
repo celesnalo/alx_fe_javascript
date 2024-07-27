@@ -4,7 +4,7 @@ let quotes = [];
   // Function to display a random quote
   function displayRandomQuote() {
     if (quotes.length === 0) {
-      alert('No quotes available. Please add a new quote.');
+      alert('No quotes available.');
       return;
     }
     const randomIndex = Math.floor(Math.random() * quotes.length);
@@ -18,11 +18,11 @@ let quotes = [];
     const newQuoteText = document.getElementById('newQuoteText').value;
     const newQuoteCategory = document.getElementById('newQuoteCategory').value;
   
-    if (newQuoteText !== "" && newQuoteCategory !== "") {
+    if (newQuoteText && newQuoteCategory) {
       quotes.push({ text: newQuoteText, category: newQuoteCategory });
       document.getElementById('newQuoteText').value = '';
       document.getElementById('newQuoteCategory').value = '';
-      displayRandomQuote();
+      displayRandomQuote(); // Optional: Display a new quote after adding
       alert('Quote added successfully!');
     } else {
       alert('Please fill out both fields.');
