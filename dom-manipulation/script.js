@@ -51,7 +51,7 @@ async function addQuote() {
       if (response.ok) {
         const serverResponse = await response.json();
         // Simulate adding the quote returned from the server
-        quotes.push({ text: serverResponse.title, category: 'Server' });
+        quotes.push({ text: serverResponse.title, category: newQuoteCategory });
         saveQuotes(); // Save updated quotes to localStorage
         updateCategoryFilter(); // Update the category filter options
         showRandomQuote(); // Optionally, display the newly added quote
@@ -141,8 +141,24 @@ function notifyUser(message) {
   }, 3000);
 }
 
+// Function to sync quotes with the server
+async function syncQuotes() {
+  try {
+    const response = await fetch(serverUrl);
+    const serverQuotes = await response.json();
+    // Sync local quotes with server quotes, server data takes precedence
+    quotes = serverQuotes.map(item => ({ text: item.title, category: 'Server' }));
+    saveQuotes();
+    updateCategoryFilter();
+    showRandomQuote();
+    notifyUser('Quotes have been synchronized with the server.');
+  } catch (error) {
+    console.error('Failed to synchronize quotes with the server:', error);
+  }
+}
+
 // Periodically fetch data from server
-setInterval(fetchQuotesFromServer, 60000); // Fetch data every 60 seconds
+setInterval(syncQuotes, 60000); // Sync data every 60 seconds
 
 // Event listener for the "Show New Quote" button
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
