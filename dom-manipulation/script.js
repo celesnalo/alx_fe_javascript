@@ -58,9 +58,46 @@ function createAddQuoteForm() {
   document.body.appendChild(formContainer);
 }
 
+// Function to export quotes to a JSON file
+function exportToJsonFile() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'quotes.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Function to import quotes from a JSON file
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function(event) {
+    const importedQuotes = JSON.parse(event.target.result);
+    quotes.push(...importedQuotes);
+    alert('Quotes imported successfully!');
+    showRandomQuote();
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
 // Event listener for the "Show New Quote" button
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
 // Initial setup
 showRandomQuote();
 createAddQuoteForm();
+
+// Adding export and import buttons
+const exportButton = document.createElement('button');
+exportButton.textContent = 'Export Quotes to JSON';
+exportButton.onclick = exportToJsonFile;
+document.body.appendChild(exportButton);
+
+const importInput = document.createElement('input');
+importInput.type = 'file';
+importInput.id = 'importFile';
+importInput.accept = '.json';
+importInput.onchange = importFromJsonFile;
+document.body.appendChild(importInput);
