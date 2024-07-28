@@ -94,8 +94,8 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
-// Function to simulate fetching data from server
-async function fetchDataFromServer() {
+// Function to fetch quotes from the server
+async function fetchQuotesFromServer() {
   try {
     const response = await fetch(serverUrl);
     const serverQuotes = await response.json();
@@ -106,7 +106,7 @@ async function fetchDataFromServer() {
     showRandomQuote();
     notifyUser('Data has been updated from the server.');
   } catch (error) {
-    console.error('Failed to fetch data from server:', error);
+    console.error('Failed to fetch data from the server:', error);
   }
 }
 
@@ -121,7 +121,7 @@ function notifyUser(message) {
 }
 
 // Periodically fetch data from server
-setInterval(fetchDataFromServer, 60000); // Fetch data every 60 seconds
+setInterval(fetchQuotesFromServer, 60000); // Fetch data every 60 seconds
 
 // Event listener for the "Show New Quote" button
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
@@ -132,4 +132,4 @@ document.getElementById('exportQuotes').addEventListener('click', exportToJsonFi
 // Initial setup
 updateCategoryFilter();
 showRandomQuote();
-fetchDataFromServer(); // Initial data fetch
+fetchQuotesFromServer(); // Initial data fetch
