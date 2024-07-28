@@ -151,7 +151,7 @@ async function syncQuotes() {
     saveQuotes();
     updateCategoryFilter();
     showRandomQuote();
-    notifyUser('Quotes have been synchronized with the server.');
+    notifyUser('Quotes synced with server!');
   } catch (error) {
     console.error('Failed to synchronize quotes with the server:', error);
   }
