@@ -42,7 +42,7 @@ function addQuote() {
     document.getElementById('newQuoteCategory').value = '';
 
     // Update the category filter options
-    updateCategoryFilter();
+    populateCategories();
 
     // Optionally, display the newly added quote
     showRandomQuote();
@@ -52,7 +52,7 @@ function addQuote() {
 }
 
 // Function to update the category filter options
-function updateCategoryFilter() {
+function populateCategories() {
   const categoryFilter = document.getElementById('categoryFilter');
   categoryFilter.innerHTML = '<option value="all">All Categories</option>';
   const categories = [...new Set(quotes.map(quote => quote.category))];
@@ -93,7 +93,7 @@ function importFromJsonFile(event) {
     quotes.push(...importedQuotes);
     localStorage.setItem('quotes', JSON.stringify(quotes)); // Save updated quotes to localStorage
     alert('Quotes imported successfully!');
-    updateCategoryFilter();
+    populateCategories();
     showRandomQuote();
   };
   fileReader.readAsText(event.target.files[0]);
@@ -102,6 +102,9 @@ function importFromJsonFile(event) {
 // Event listener for the "Show New Quote" button
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
+// Event listener for the "Export Quotes" button
+document.getElementById('exportQuotes').addEventListener('click', exportToJsonFile);
+
 // Initial setup
-updateCategoryFilter();
+populateCategories();
 showRandomQuote();
