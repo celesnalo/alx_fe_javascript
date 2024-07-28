@@ -1,3 +1,6 @@
+// Mock server URL
+const serverUrl = 'https://jsonplaceholder.typicode.com/posts';
+
 // Array of quote objects
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   { text: "The only way to do great work is to love what you do.", category: "Inspiration" },
@@ -35,24 +38,16 @@ function addQuote() {
   if (newQuoteText && newQuoteCategory) {
     const newQuote = { text: newQuoteText, category: newQuoteCategory };
     quotes.push(newQuote);
-    localStorage.setItem('quotes', JSON.stringify(quotes)); // Save updated quotes to localStorage
-
-    // Clear input fields
-    document.getElementById('newQuoteText').value = '';
-    document.getElementById('newQuoteCategory').value = '';
-
-    // Update the category filter options
-    populateCategories();
-
-    // Optionally, display the newly added quote
-    showRandomQuote();
+    saveQuotes(); // Save updated quotes to localStorage
+    updateCategoryFilter(); // Update the category filter options
+    showRandomQuote(); // Optionally, display the newly added quote
   } else {
     alert('Please enter both a quote and a category.');
   }
 }
 
 // Function to update the category filter options
-function populateCategories() {
+function updateCategoryFilter() {
   const categoryFilter = document.getElementById('categoryFilter');
   categoryFilter.innerHTML = '<option value="all">All Categories</option>';
   const categories = [...new Set(quotes.map(quote => quote.category))];
@@ -91,13 +86,42 @@ function importFromJsonFile(event) {
   fileReader.onload = function(event) {
     const importedQuotes = JSON.parse(event.target.result);
     quotes.push(...importedQuotes);
-    localStorage.setItem('quotes', JSON.stringify(quotes)); // Save updated quotes to localStorage
+    saveQuotes(); // Save updated quotes to localStorage
     alert('Quotes imported successfully!');
-    populateCategories();
+    updateCategoryFilter();
     showRandomQuote();
   };
   fileReader.readAsText(event.target.files[0]);
 }
+
+// Function to simulate fetching data from server
+async function fetchDataFromServer() {
+  try {
+    const response = await fetch(serverUrl);
+    const serverQuotes = await response.json();
+    // Simulate server data having precedence
+    quotes = serverQuotes.map(item => ({ text: item.title, category: 'Server' }));
+    saveQuotes();
+    updateCategoryFilter();
+    showRandomQuote();
+    notifyUser('Data has been updated from the server.');
+  } catch (error) {
+    console.error('Failed to fetch data from server:', error);
+  }
+}
+
+// Function to notify user about data updates
+function notifyUser(message) {
+  const notification = document.getElementById('notification');
+  notification.textContent = message;
+  notification.style.display = 'block';
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 3000);
+}
+
+// Periodically fetch data from server
+setInterval(fetchDataFromServer, 60000); // Fetch data every 60 seconds
 
 // Event listener for the "Show New Quote" button
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
@@ -106,5 +130,6 @@ document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 document.getElementById('exportQuotes').addEventListener('click', exportToJsonFile);
 
 // Initial setup
-populateCategories();
+updateCategoryFilter();
 showRandomQuote();
+fetchDataFromServer(); // Initial data fetch
