@@ -1,9 +1,14 @@
 // Array of quote objects
-let quotes = [
+let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   { text: "The only way to do great work is to love what you do.", category: "Inspiration" },
   { text: "Life is what happens when you're busy making other plans.", category: "Life" },
   { text: "Success is not how high you have climbed, but how you make a positive difference to the world.", category: "Success" }
 ];
+
+// Function to save quotes to localStorage
+function saveQuotes() {
+  localStorage.setItem('quotes', JSON.stringify(quotes));
+}
 
 // Function to display a random quote
 function showRandomQuote() {
@@ -21,6 +26,7 @@ function addQuote() {
   if (newQuoteText && newQuoteCategory) {
     const newQuote = { text: newQuoteText, category: newQuoteCategory };
     quotes.push(newQuote);
+    localStorage.setItem('quotes', JSON.stringify(quotes)); // Save updated quotes to localStorage
 
     // Clear input fields
     document.getElementById('newQuoteText').value = '';
@@ -76,6 +82,7 @@ function importFromJsonFile(event) {
   fileReader.onload = function(event) {
     const importedQuotes = JSON.parse(event.target.result);
     quotes.push(...importedQuotes);
+    localStorage.setItem('quotes', JSON.stringify(quotes)); // Save updated quotes to localStorage
     alert('Quotes imported successfully!');
     showRandomQuote();
   };
